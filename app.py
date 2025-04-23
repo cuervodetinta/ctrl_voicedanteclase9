@@ -31,10 +31,9 @@ st.markdown(
     <style>
         .stApp {
             background-color: #ffe6f0;
-            text-align: center;
         }
         .custom-text, .stMarkdown, .stText, .stSubheader, .stTitle {
-            color: #b30059;
+            color: black !important;
             text-align: center;
         }
         .stButton>button {
@@ -47,10 +46,12 @@ st.markdown(
         .stButton>button:hover {
             background-color: #800040;
         }
-        .centered {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .custom-box {
+            background-color: #fce4ec;
+            border: 2px solid #b30059;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
         }
     </style>
     """,
@@ -64,43 +65,42 @@ col1, col2 = st.columns([1, 1])
 
 with col1:
     image = Image.open('voice_ctrl.jpg')
-    st.image(image, use_column_width=True)
+    st.image(image, use_container_width=True)
 
 with col2:
-    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown("<div class='custom-box'>", unsafe_allow_html=True)
     st.markdown("<p class='custom-text'>Toca el Botón y habla</p>", unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
+    stt_button = Button(label="🎙️ Inicio", width=250)
 
-stt_button = Button(label="🎙️ Inicio", width=250)
-
-stt_button.js_on_event("button_click", CustomJS(code="""
-    var recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
- 
-    recognition.onresult = function (e) {
-        var value = "";
-        for (var i = e.resultIndex; i < e.results.length; ++i) {
-            if (e.results[i].isFinal) {
-                value += e.results[i][0].transcript;
+    stt_button.js_on_event("button_click", CustomJS(code="""
+        var recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+    
+        recognition.onresult = function (e) {
+            var value = "";
+            for (var i = e.resultIndex; i < e.results.length; ++i) {
+                if (e.results[i].isFinal) {
+                    value += e.results[i][0].transcript;
+                }
+            }
+            if ( value != "") {
+                document.dispatchEvent(new CustomEvent("GET_TEXT", {detail: value}));
             }
         }
-        if ( value != "") {
-            document.dispatchEvent(new CustomEvent("GET_TEXT", {detail: value}));
-        }
-    }
-    recognition.start();
-    """))
+        recognition.start();
+        """))
 
-result = streamlit_bokeh_events(
-    stt_button,
-    events="GET_TEXT",
-    key="listen",
-    refresh_on_update=False,
-    override_height=75,
-    debounce_time=0
-)
+    result = streamlit_bokeh_events(
+        stt_button,
+        events="GET_TEXT",
+        key="listen",
+        refresh_on_update=False,
+        override_height=75,
+        debounce_time=0
+    )
+    st.markdown("</div>", unsafe_allow_html=True)
 
 if result:
     if "GET_TEXT" in result:
