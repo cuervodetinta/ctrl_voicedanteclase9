@@ -32,9 +32,9 @@ st.markdown(
         .stApp {
             background-color: #ffe6f0;
         }
-        .custom-text, .stMarkdown, .stText, .stSubheader, .stTitle {
+        .custom-text, .stMarkdown, .stText, .stSubheader, .stTitle, h1, h2, h3, h4, h5, h6, p {
             color: black !important;
-            text-align: center;
+            text-align: center !important;
         }
         .stButton>button {
             background-color: #b30059;
@@ -58,8 +58,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.title("INTERFACES MULTIMODALES")
-st.subheader("CONTROL POR VOZ")
+st.markdown("<h1>INTERFACES MULTIMODALES</h1>", unsafe_allow_html=True)
+st.markdown("<h3>CONTROL POR VOZ</h3>", unsafe_allow_html=True)
 
 col1, col2 = st.columns([1, 1])
 
